@@ -1,0 +1,130 @@
+:root {
+  --header-bg-color: #310A31;
+  --header-font-color: #88B7B5;
+  --dark-purple: #310a31;
+  --rhythm: #847996;
+  --opal: #88b7b5;
+  --cambridge-blue: #a7cab1;
+  --eggshell: #f4ecd6;
+
+  --main-margin: 30px;
+
+  font-family: 'Poppins', sans-serif;
+}
+
+body,header,main,h1,h3 {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h3 {
+  font-size: 2rem;
+}
+
+body {
+  display:grid;
+  grid-template-columns: 400px 1fr 400px;
+  grid-template-rows: 100px 1fr;
+  gap: var(--main-margin);
+
+  height: 100vh;
+  background-color: var(--opal);
+}
+
+header,
+.sidebar,
+.game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  grid-column: 1/4;
+
+  background-color: var(--header-bg-color);
+  color: var(--eggshell);
+}
+
+.sidebar, 
+.game {
+  grid-row: 2/3;
+  border-radius: 20px;
+}
+
+.sidebar {
+  grid-column: 1/2;
+  background-color: var(--eggshell);
+  margin-left: var(--main-margin);
+  margin-bottom: auto;
+}
+
+.game {
+  grid-column: 2/3;
+  background-color: var(--eggshell);
+
+  display: flex;
+  flex-direction: column;
+  margin-bottom: auto;
+}
+
+.game-container {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 200px);
+  grid-template-rows: repeat(3, 200px);
+
+  margin: var(--main-margin);
+  background-color: black;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--eggshell);
+
+  font-size: 10rem;
+}
+
+.cell:hover {
+  background-color: var(--cambridge-blue);
+}
+
+.inactive:hover {
+  background-color: var(--dark-purple);
+  color: var(--eggshell);
+  cursor: not-allowed;
+}
+
+.pointer,
+#restart {
+  cursor: pointer;
+}
+
+#restart {
+  font-family: inherit;
+  font-size: 2rem;
+  
+  margin-bottom: var(--main-margin);
+  padding: 10px 30px;
+
+  border: none;
+  border-radius: 20px;
+  
+  background-color: var(--dark-purple);
+  color: var(--eggshell);
+}
+
+#restart:hover {
+  background-color: var(--opal);
+  color: var(--rhythm)
+}
+
+#restart:active {
+  transform: scale(0.9);
+}
