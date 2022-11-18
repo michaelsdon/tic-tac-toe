@@ -27,7 +27,7 @@ h3 {
 
 body {
   display:grid;
-  grid-template-columns: 400px 1fr 400px;
+  grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 100px 1fr;
   gap: var(--main-margin);
 
@@ -92,7 +92,7 @@ header {
 }
 
 .cell:hover {
-  background-color: var(--cambridge-blue);
+  background-color: var(--opal);
 }
 
 .inactive:hover {
@@ -122,9 +122,13 @@ header {
 
 #restart:hover {
   background-color: var(--opal);
-  color: var(--rhythm)
+  color: var(--rhythm);
 }
 
 #restart:active {
   transform: scale(0.9);
+}
+
+.win {
+  background-color: var(--rhythm);
 }
