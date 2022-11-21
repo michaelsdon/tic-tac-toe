@@ -1,114 +1,176 @@
-const gameBoard = (function() {
-  let board = ['','','',
-               '','','',
-               '','',''];
+Player = function(sign) {
+  this.sign = sign;
 
-  let turn = "X";
-
-  function getopenPositionss() {
-    let openPositions = [];
-
-    for (let i = 0; i < board.length; i++) {
-      if (board[i] === '') {
-        openPositions.push(i);
-      }
-    }
-
-    return openPositions;
+  function getSign() {
+    return sign;
   }
 
-  function freezeBoard() {
-    for (let i = 0; i < board.length; i++) {
-      const cell = document.getElementById(i.toString());
-      cell.removeEventListener('click', move);
-    }
+  return {getSign}
+};
+
+Board = (function() {
+
+  board = ['', '', '', '', '', '', '', '', '']
+  
+  function getBoard() {
+    return board;
   };
 
-  function setWinner(winners) {
-    for (element of winners) {
-      const win = document.getElementById(element.toString());
-      win.classList.add('win');
+  function updateBoard(index, sign) {
+    board[index] = sign;
+  };
+
+  function restartBoard() {
+    board = ['', '', '', '', '', '', '', '', '']
+  };
+
+  return {getBoard, updateBoard, restartBoard};
+})();
+
+Display = (function() {
+
+  const header = document.getElementById('game-header');
+  const cells = document.querySelectorAll('.cell');
+  const restartBtn = document.getElementById('restart');
+
+  cells.forEach((cell) => {
+    cell.addEventListener('click', playRound);
+  })
+
+  restartBtn.addEventListener('click', restart);
+
+  function playRound(e) {
+    Game.playRound(e);
+  }
+
+  function restart(e) {
+    Game.restart();
+    cells.forEach((cell) => {
+      cell.classList.remove('win');
+    })
+  }
+
+  function updateMessage(message) {
+    header.textContent = message;
+  }
+
+  function updateBoard() {
+    const board = Board.getBoard();
+    for (let i = 0; i < board.length; i++) {
+      const cell = document.getElementById(i.toString());
+      cell.textContent = board[i];
     }
-    freezeBoard();
+  }
+  
+  function setWinner(a, b, c) {
+    const aCell = document.getElementById(a.toString()); 
+    const bCell = document.getElementById(b.toString()); 
+    const cCell = document.getElementById(c.toString());
+    
+    aCell.classList.add('win');
+    bCell.classList.add('win');
+    cCell.classList.add('win');
+  }
+
+  return {updateMessage, updateBoard, setWinner}
+})();
+
+Game = (function() {
+  xPlayer = Player('X');
+  oPlayer = Player('O');
+  round = 0;
+  gameOver = false;
+  winner = null;
+
+  function playRound(e) {
+    const id = parseInt(e.target.id);
+    if (checkLegalMove(id) && !gameOver) {
+      const player = getPlayerTurn()
+      const playerSign = player.getSign();
+      round += 1;
+
+      Board.updateBoard(id, playerSign);
+      Display.updateBoard();
+
+      if (checkWinner() || winner !== null) {
+        winner = player;
+        gameOver = true;
+        Display.updateMessage(`Player ${winner.getSign()} Wins`)
+      } else if (round > 8) {
+        Display.updateMessage('It\'s a Draw!');
+      } else {
+        const newPlayerSign = getPlayerTurn().getSign();
+        Display.updateMessage(`Player ${newPlayerSign}'s Turn`);
+      }
+
+      // if (round > 7) {
+      //   gameOver = true;
+      // }
+      
+    } else if (winner === null && round > 7) {
+
+    };
+    console.log(`Winner: ${winner}, gameOver: ${gameOver}, round: ${round}`);
+
   };
 
   function checkWinner() {
-
-    if (board[0] === board[1] && board[1] === board[2] && board[0] !== '') {
-      setWinner([0, 1, 2]);
-    } else if (board[3] === board[4] && board[4] === board[5] && board[5] !== '') {
-      setWinner([3, 4, 5]);
-    } else if (board[6] === board[7] && board[7] === board[8] && board[8] !== '') {
-      setWinner([6, 7, 8]);
-    } else if (board[0] === board[3] && board[3] === board[6] && board[6] !== '') {
-      setWinner([0, 3, 6]);
-    } else if (board[1] === board[4] && board[4] === board[7] && board[7] !== '') {
-      setWinner([1, 4, 7]);
-    } else if (board[2] === board[5] && board[5] === board[8] && board[8] !== '') {
-      setWinner([2, 5, 8]);
-    } else if (board[0] === board[4] && board[4] === board[8] && board[8] !== '') {
-      setWinner([0, 4, 8]);
-    } else if (board[2] === board[4] && board[4] === board[6] && board[6] !== '') {
-      setWinner([2, 4, 6]);
+    if (allEqual(0, 1, 2)){
+      return true;
+    } else if (allEqual(3, 4, 5)) {
+      return true;
+    } else if (allEqual(6, 7, 8)) {
+      return true;
+    } else if (allEqual(0, 3, 6)) {
+      return true;
+    } else if (allEqual(1, 4, 7)) {
+      return true;
+    } else if (allEqual(2, 5, 8)) {
+      return true;
+    } else if (allEqual(0, 4, 8)) {
+      return true;
+    } else if (allEqual(2, 4, 6)) {
+      return true;
     }
+    return false;
+  }
+
+  function allEqual(a, b, c) {
+    const board = Board.getBoard();
+    if (board[a] === board[b] && board[b] === board[c] && board[c] !== '') {
+      Display.setWinner(a, b, c);
+      return true;
+    }
+    return false
+  }
+
+  function getPlayerTurn() {
+    if (round % 2 === 0) {
+      return xPlayer;
+    } else {
+      return oPlayer;
+    }
+  }
+
+  function restart() {
+    Board.restartBoard();
+    Display.updateBoard();
+    round = 0;
+    gameOver = false;
+    winner = null;
+    Display.updateMessage(`Player ${getPlayerTurn().getSign()}'s Turn`)
   };
 
-  function isLegalMove(location) {
-    if (board[location] !== "") {
+  function checkLegalMove(index) {
+    const board = Board.getBoard();
+    if (board[index] !== '') {
       return false;
     } else {
       return true;
     }
   };
 
-  function move(e) {
-    const location = parseInt(e.target.id);
-    if (isLegalMove(location)) {
-      board[location] = turn;
-    
-      if (turn === "X") {
-        turn = "O";
-      } else {
-        turn = "X";
-      };
-      checkWinner();
-    }
+  Display.updateMessage(`Player ${getPlayerTurn().getSign()}'s Turn`)
 
-    render();
-  };
-
-  function restart(e) {
-    for (let i = 0; i < board.length; i++) {
-      const cell = document.getElementById(i.toString());
-      cell.classList.remove('win');
-      board[i] = '';
-    }
-
-    turn = "X";
-    render();
-  };
-
-  function render() {
-    for (let i = 0; i < board.length; i++) {
-      let id = i.toString();
-      let cellValue = board[i];
-
-      const cell = document.getElementById(id);
-      cell.addEventListener('click', move);
-
-      if (cellValue !== '') {
-        cell.textContent = board[i];
-        cell.classList.add('inactive');
-      } else {
-        cell.textContent = '';
-        cell.classList.remove('inactive');
-      }
-    }
-
-    const restartButton = document.getElementById('restart');
-    restartButton.addEventListener('click', restart);
-  };
-
-  render();
-
+  return {playRound, restart}
 })();
