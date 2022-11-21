@@ -101,16 +101,9 @@ Game = (function() {
       } else {
         const newPlayerSign = getPlayerTurn().getSign();
         Display.updateMessage(`Player ${newPlayerSign}'s Turn`);
-      }
-
-      // if (round > 7) {
-      //   gameOver = true;
-      // }
+      };
       
-    } else if (winner === null && round > 7) {
-
     };
-    console.log(`Winner: ${winner}, gameOver: ${gameOver}, round: ${round}`);
 
   };
 
